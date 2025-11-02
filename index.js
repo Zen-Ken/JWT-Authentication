@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 const users = [
   { 
+    id: 1,
     username: "jdoe",
     password: "password123"
   },
