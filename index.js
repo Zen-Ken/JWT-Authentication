@@ -4,8 +4,10 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 
 const users = [
-  { username: "jdoe",
-    password: "password123"}
+  { 
+    username: "jdoe",
+    password: "password123"
+  },
 ];
 
 const revokedRefreshTokens = new Set();
@@ -35,7 +37,25 @@ function authenticateToken(req, res, next) {
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
-  const user = { name: username };
+  const password = req.body.password;
+
+  if (!username) {
+    return res.status(400).json({ error: "Username required" });
+  }
+
+  if (!password) {
+    return res.status(400).json({ error: "Password required" });
+  }
+
+  const foundUser = users.find(
+    (user) => user.username === username && user.password === req.body.password
+  );
+
+  if (!foundUser) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  const user = { name: foundUser.username };
 
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 10});
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
@@ -49,7 +69,6 @@ app.post("/login", (req, res) => {
 });
 
 app.post('/token', (req, res) => {
-  console.log("Refreshing token...",);
   const refreshToken = req.cookies.refreshToken; // From cookie
   
   if (!refreshToken) return res.sendStatus(401);
