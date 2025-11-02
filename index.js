@@ -127,7 +127,7 @@ app.post("/logout", (req, res) => {
       secure: true,
     });
 
-    return res.sendStatus(204); // No content
+    res.json("Logged out"); // No content
   });
 });
 
