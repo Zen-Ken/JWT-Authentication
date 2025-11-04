@@ -29,9 +29,9 @@ function authenticateToken(req, res, next) {
 
   if (token == null) return res.sendStatus(401); // unauthorized
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.sendStatus(403);
-    req.user = user;
+    req.user = decoded;
     next();
   });
 }
@@ -74,11 +74,11 @@ app.post('/token', (req, res) => {
   
   if (!refreshToken) return res.sendStatus(401);
   
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.sendStatus(403);
     
-    const newAccessToken = jwt.sign({username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 180 });
-    const newRefreshToken = jwt.sign({username: user.username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    const newAccessToken = jwt.sign({username: decoded.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 180 });
+    const newRefreshToken = jwt.sign({username: decoded.username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
     // Set new refresh token in HttpOnly cookie
     res.cookie('refreshToken', newRefreshToken, {
@@ -99,10 +99,10 @@ app.post("/introspect", (req, res) => {
   
   if (token == null) return res.sendStatus(401); // unauthorized
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.sendStatus(403)
     
-    return res.status(200).json(user);
+    return res.status(200).json(decoded);
   });
 })
 
@@ -112,7 +112,7 @@ app.post("/logout", (req, res) => {
 
   if (token == null) return res.sendStatus(401); // unauthorized
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.sendStatus(403);
     
     // store revoke old refresh token so user doesn't stay logged in
