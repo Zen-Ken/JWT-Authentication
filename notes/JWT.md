@@ -115,6 +115,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiamRvZSIsImlhdCI6MTUxNjIzOTAyMiw
 3. **Signature**: `SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`
    - Cannot be decoded (it's a hash)
    - Can only be verified using the secret
+     - Header and Payload is combined with secret and hashed with this header alg
+     - This hash is compared with the Signature. 
+   - Ensuring Integrity and Authenticity (Token was tampered with and Token was signed by someone with the secret)
 
 ---
 
