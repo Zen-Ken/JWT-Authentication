@@ -11,6 +11,7 @@ jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
 ```
 
 When a JWT with the header with an `alg: "none"` the JWT is not signed. This bypasses the secret as there's no signature to verify.
+An attack can create the own "signed" or vaild token with what ever claims they want in the payload, bypassing authorization.
 
 | NOTE: Example is hypothetical for education purposes
 
